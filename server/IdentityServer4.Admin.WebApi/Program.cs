@@ -51,7 +51,6 @@ try
     app.MapControllers();
 
     app.Lifetime.SyncFreesqlStorageDatabase(app.Services, app.Logger);
-    app.Lifetime.InitApplication(app.Services, app.Logger);
 
     app.Run();
 }

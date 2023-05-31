@@ -152,14 +152,14 @@ namespace IdentityServer4.Storage.FreeSql
             lifetime.ApplicationStarted.Register(() =>
             {
                 SyncDatabaseStructure(serviceProvider, logger);
+
+                InitApplication(serviceProvider, logger);
             });
 
             return lifetime;
         }
 
-        public static IHostApplicationLifetime InitApplication(this IHostApplicationLifetime lifetime,
-            IServiceProvider serviceProvider,
-            ILogger logger)
+        private static void InitApplication(IServiceProvider serviceProvider, ILogger logger)
         {
             var initKey = "_ApplicationInitialized";
             var keyvalueService = serviceProvider.GetRequiredService<IDbKeyValueService>();
@@ -186,12 +186,12 @@ namespace IdentityServer4.Storage.FreeSql
                 {
                     logger.LogWarning(blex, "Can't init");
 
-                    return lifetime;
+                    return;
                 }
                 catch (Exception ex)
                 {
                     logger.LogError(ex, "Can't init");
-                    return lifetime;
+                    return;
                 }
                 finally
                 {
@@ -205,8 +205,6 @@ namespace IdentityServer4.Storage.FreeSql
 
                 logger.LogInformation("Init succeed");
             }
-
-            return lifetime;
         }
 
 
