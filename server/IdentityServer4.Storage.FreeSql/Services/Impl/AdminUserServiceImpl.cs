@@ -42,6 +42,10 @@ namespace IdentityServer4.Storage.FreeSql.Services.Impl
             if (string.IsNullOrWhiteSpace(request.UserName)) throw new ArgumentNullException(nameof(request.UserName));
             if (string.IsNullOrWhiteSpace(request.Password)) throw new ArgumentNullException(nameof(request.Password));
 
+            // check the same name!
+            if (await _adminUserRepository.GetAdminUserByUsernameAsync(request.UserName) != null)
+                throw new BllException(500, $"User \"{request.UserName}\" is already existed");
+
             var muser = new MAdminUser
             {
                 CreatedBy = request.Operator,

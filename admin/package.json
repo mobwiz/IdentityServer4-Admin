@@ -6,7 +6,7 @@
     "serve": "vue-cli-service  serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "fix-memory-limit": "cross-env LIMIT=768 increase-memory-limit"
+    "fix-memory-limit": "cross-env LIMIT=1024 increase-memory-limit"
   },
   "dependencies": {
     "@ant-design/icons-vue": "^6.1.0",

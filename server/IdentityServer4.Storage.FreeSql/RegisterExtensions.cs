@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Mobwiz.Common.Exceptions;
 using System;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -114,7 +115,7 @@ namespace IdentityServer4.Storage.FreeSql
         /// <returns></returns>
         public static IIdentityServerBuilder AddFreesqlStorage(this IIdentityServerBuilder builder)
         {
-          
+
 
 
             builder
@@ -152,6 +153,58 @@ namespace IdentityServer4.Storage.FreeSql
             {
                 SyncDatabaseStructure(serviceProvider, logger);
             });
+
+            return lifetime;
+        }
+
+        public static IHostApplicationLifetime InitApplication(this IHostApplicationLifetime lifetime,
+            IServiceProvider serviceProvider,
+            ILogger logger)
+        {
+            var initKey = "_ApplicationInitialized";
+            var keyvalueService = serviceProvider.GetRequiredService<IDbKeyValueService>();
+
+            var obj = keyvalueService.GetItemAsync(initKey).Result;
+
+            if (obj == null)
+            {
+                logger.LogInformation("System is not initialized, try to init...");
+                // do init
+                var userService = serviceProvider.GetRequiredService<IDbAdminUserService>();
+
+                try
+                {
+                    userService.CreateAdminUserAsync(new Services.Requests.CreateAdminUserRequest
+                    {
+                        UserName = "admin",
+                        Password = "admin123456",
+                        Operator = "Initializer"
+                    }).GetAwaiter().GetResult();
+
+                }
+                catch (BllException blex)
+                {
+                    logger.LogWarning(blex, "Can't init");
+
+                    return lifetime;
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Can't init");
+                    return lifetime;
+                }
+                finally
+                {
+                    keyvalueService.SetItemAsync(new Services.Requests.SetKeyValueItemRequest
+                    {
+                        Key = initKey,
+                        Value = DateTime.Now.ToString(),
+                        Operator = "Initializer"
+                    }).GetAwaiter().GetResult();
+                }
+
+                logger.LogInformation("Init succeed");
+            }
 
             return lifetime;
         }
