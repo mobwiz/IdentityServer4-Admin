@@ -16,6 +16,7 @@ WORKDIR /admin
 COPY ["./admin/", "."]
 
 RUN yarn
+RUN npm run fix-memory-limit
 RUN yarn build
 
 FROM  mcr.microsoft.com/dotnet/aspnet:6.0 AS final
