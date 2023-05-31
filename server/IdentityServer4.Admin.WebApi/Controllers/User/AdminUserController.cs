@@ -8,11 +8,13 @@ using Mobwiz.Common.BaseTypes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using IdentityServer4.Admin.WebApi.Filters;
 
 namespace IdentityServer4.Admin.WebApi.Controllers.User
 {
     [Authorize]
     [Route("api/admin/user")]
+    [ServiceFilter(typeof(DemoModeFilter))]
     public class AdminUserController : AdminControllerBase, IApiResult
     {
         private IDbAdminUserService _adminUserService;

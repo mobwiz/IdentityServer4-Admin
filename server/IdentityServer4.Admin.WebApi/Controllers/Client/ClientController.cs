@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using IdentityServer4.Admin.WebApi.Utils;
 using Org.BouncyCastle.Crypto;
 using AutoMapper;
+using IdentityServer4.Admin.WebApi.Filters;
 
 namespace IdentityServer4.Admin.WebApi.Controllers.Client
 {
@@ -20,6 +21,7 @@ namespace IdentityServer4.Admin.WebApi.Controllers.Client
     [ApiController]
     [Route("api/admin/client")]
     [Authorize]
+    [ServiceFilter(typeof(DemoModeFilter))]
     public class ClientController : AdminControllerBase, IApiResult
     {
         private IDbClientService _clientService;
@@ -106,7 +108,7 @@ namespace IdentityServer4.Admin.WebApi.Controllers.Client
                 LogoUri = model.logoUri,
                 RequireClientSecret = model.requireClientSecret ? (byte)1 : (byte)0,
                 AllowRememberConsent = model.allowRememberConsent ? (byte)1 : (byte)0,
-                TokenLifetime = model.tokenLifetime,                
+                TokenLifetime = model.tokenLifetime,
             };
 
             info.AllowedGrantTypes.AddRange(model.allowedGrantTypes.Where(str => !string.IsNullOrWhiteSpace(str)));

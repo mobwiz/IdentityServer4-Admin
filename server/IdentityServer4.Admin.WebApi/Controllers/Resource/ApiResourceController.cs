@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using System.ComponentModel.DataAnnotations;
+using IdentityServer4.Admin.WebApi.Filters;
 
 namespace IdentityServer4.Admin.WebApi.Controllers.Resource
 {
@@ -18,7 +19,7 @@ namespace IdentityServer4.Admin.WebApi.Controllers.Resource
     [Route("api/admin/apiresource")]
     [ApiController]
     [Authorize]
-
+    [ServiceFilter(typeof(DemoModeFilter))]
     public class ApiResourceController : AdminControllerBase, IApiResult
     {
         private IDbApiResourceService _apiResourceService;

@@ -75,6 +75,8 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
     services.AddSwaggerGen();
     services.AddHealthChecks();
 
+    services.AddTransient<DemoModeFilter>();
+
     services.AddIdsStorageService(options =>
     {
         var dbType = configuration["Database:Type"];
