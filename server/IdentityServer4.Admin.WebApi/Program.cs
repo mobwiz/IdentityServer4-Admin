@@ -38,6 +38,10 @@ try
 
     app.UseHealthChecks("/health");
 
+    // use static
+    app.UseDefaultFiles();
+    app.UseStaticFiles();
+
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {
