@@ -150,9 +150,9 @@ export default {
             AccountApi.getUserInfo().then((res2) => {
               if (res2.code === 0) {
                 that.$store.commit("setUserinfo", res2.data);
-                that.$router.push("/");
+                that.$router.push("./");
               } else {
-                that.$router.push("/login");
+                that.$router.push("./login");
               }
             });
           }

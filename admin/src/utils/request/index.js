@@ -33,7 +33,7 @@ const err = (error) => {
     } else if (error.response.status === 401) {
       // 跳转登录页面了
       // const curUrl = window.location.toString()
-      window.location = `/#/login`;
+      window.location = `#/login`;
     } else {
       // const data = error.response.data;
       message.error(`错误代码：${error.response.status}，请求出错`);

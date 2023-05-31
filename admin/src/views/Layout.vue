@@ -207,12 +207,12 @@ export default {
         if (resp.code === 0) {
           this.$store.commit("setUserinfo", resp.data);
         } else {
-          this.$router.push("/login");
+          this.$router.push("./login");
         }
       })
       .catch((err) => {
         console.log(err);
-        this.$router.push("/login");
+        this.$router.push("./login");
       });
 
     // if (this.$store.state.user == null) {
