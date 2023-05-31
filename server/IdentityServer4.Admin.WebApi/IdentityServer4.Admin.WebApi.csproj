@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>ba9baf08-399e-4f01-9fb8-3d4698609b49</UserSecretsId>
+    </PropertyGroup>
+
+    <ItemGroup>
+
+        <PackageReference Include="Caching.CSRedis" Version="3.8.670" />
+        <PackageReference Include="CSRedisCore" Version="3.8.670" />
+        <PackageReference Include="NLog.Web.AspNetCore" Version="5.2.1" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="BackgroundServices\" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\IdentityServer4.Storage.FreeSql\IdentityServer4.Storage.FreeSql.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="IdentityServer4.Admin.WebApi.Tests" />
+    </ItemGroup>
+
+</Project>
