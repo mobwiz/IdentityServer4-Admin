@@ -23,7 +23,7 @@ WORKDIR /app
 USER works
 
 COPY --from=build --chown=works /app/publish .
-COPY --from=view_base --chown=works /admin/dist ./wwwroot
+COPY --from=view_base --chown=works /admin/dist ./wwwroot/admin
 
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 ENV ASPNETCORE_URLS=http://+:5000

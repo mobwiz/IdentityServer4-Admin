@@ -12,3 +12,17 @@ Based on [IdentityServer4](https://github.com/IdentityServer/IdentityServer4)，
   - IdentityServer4.Storage.FreeSql
   - IdentityServer.QuickStart.UI
 - +admin  : Web UI for manage the IdentityServer4, based on VUE, Antd-VUE
+
+## How to use
+
+### Develop
+Put your local mysql and redis config to project secrets. 
+
+### Build
+
+Build the webapi and the view into single image
+
+```bash
+docker build -t identity-admin:localest -f ./docker/Dockerfile .
+```
+
