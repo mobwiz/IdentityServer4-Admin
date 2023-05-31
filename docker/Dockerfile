@@ -20,6 +20,7 @@ RUN yarn
 RUN yarn build
 
 FROM  mcr.microsoft.com/dotnet/aspnet:6.0 AS final
+RUN useradd -s /bin/bash works
 WORKDIR /app
 USER works
 
