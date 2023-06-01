@@ -139,7 +139,11 @@ namespace IdentityServer4.Storage.FreeSql.Services.Impl
 
             if (clientInfo == null) throw new ArgumentNullException(nameof(request.Client));
 
+            if (clientInfo.Id <= 0) throw new ArgumentNullException(nameof(request.Client.Id));
+            if (string.IsNullOrWhiteSpace(clientInfo.ClientId)) throw new ArgumentNullException(nameof(request.Client.ClientId));
+
             var client = await this._clientRepository.GetClientByClientIdAsync(clientInfo.ClientId);
+
             if (client != null && client.Id != clientInfo.Id)
             {
                 throw new BllException(400, "Client with id {0} already existed", client.ClientId);

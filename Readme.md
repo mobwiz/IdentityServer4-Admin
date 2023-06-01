@@ -25,4 +25,6 @@ Build the webapi and the view into single image
 ```bash
 docker build -t identity-admin:localest -f ./docker/Dockerfile .
 ```
+### Demo Site
 
+[http://demo-idsadm.dotnetcore.icu/admin/](http://demo-idsadm.dotnetcore.icu/admin/) 

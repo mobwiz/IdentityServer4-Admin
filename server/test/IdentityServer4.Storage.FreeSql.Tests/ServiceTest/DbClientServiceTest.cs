@@ -4,12 +4,8 @@
 using FluentAssertions;
 using IdentityServer4.Storage.FreeSql.Services;
 using Microsoft.Extensions.DependencyInjection;
-using NetTopologySuite.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Mobwiz.Common.Exceptions;
+using NetTaste;
 
 namespace IdentityServer4.Storage.FreeSql.Tests.ServiceTest
 {
@@ -34,6 +30,26 @@ namespace IdentityServer4.Storage.FreeSql.Tests.ServiceTest
         private readonly string[] TESTREDIRECTURIS = new[] { "http://redirect1", "http://redirect2" };
         private readonly string[] TESTPOSTLOGOUTREDIRECTURIS = new[] { "http://logouturi1", "http://lgouturi2" };
         private readonly string[] TESTCLIENTSECRET = new[] { "secret1", "Secret3" };
+        private const int TESTTOKENLIFETIME = 3600;
+
+        // test data 2
+        private const string TESTCLIENTID2 = "client2";
+        private const string TESTCLIENTNAME2 = "Test Client 2";
+        private const string TESTCLIENTDESCRIPTION2 = "This client is used for client 2";
+        private const string TESTCLIENTURI2 = "http://test9080921920322222.com";
+        private const byte TEST_ENABLED2 = 1;
+        private const byte TEST_DISABLED2 = 0;
+        private const byte TESTDISPLAYORDER2 = 1;
+        private readonly string TESTLOGOURI2 = "http://logo2";
+        private const string TESTFRONTCHANNELLOGOUTURI2 = "http://logoutfront1_2";
+        private const string TESTBACKCHANNELLOGOUTURI2 = "http://logoutfront2_2";
+        private readonly string[] TESTALLOWEDSCOPES2 = new[] { "openid", "profile", "test2" };
+        private readonly string[] TESTALLOWEDGRANTTYPES2 = new[] { "client_credential" };
+        private readonly string[] TESTALLOWEDCORSORIGINS2 = new[] { "http://cors1.com_2" };
+        private readonly string[] TESTREDIRECTURIS2 = new[] { "http://redirect1_2", "http://redirect2_2" };
+        private readonly string[] TESTPOSTLOGOUTREDIRECTURIS2 = new[] { "http://logouturi1_2", "http://lgouturi2_2" };
+        private readonly string[] TESTCLIENTSECRET2 = new[] { "secret1_2", "Secret3_2" };
+        private const int TESTTOKENLIFETIME2 = 234;
 
         private readonly ServerFixture _fixture;
 
@@ -69,12 +85,12 @@ namespace IdentityServer4.Storage.FreeSql.Tests.ServiceTest
                     AllowRememberConsent = TEST_ENABLED,
                     RequirePkce = TEST_ENABLED,
                     RequireConsent = TEST_ENABLED,
-                    TokenLifetime = 3600,
+                    TokenLifetime = TESTTOKENLIFETIME,
                     RequireClientSecret = TEST_ENABLED,
                 }
             });
         }
-        private async Task CreateTestObj2(IDbClientService service, int index)
+        private async Task<long> CreateTestObj2(IDbClientService service, int index)
         {
             var result = await service.CreateClientAsync(new Services.Requests.CreateClientRequest
             {
@@ -95,7 +111,7 @@ namespace IdentityServer4.Storage.FreeSql.Tests.ServiceTest
                     AllowRememberConsent = (byte)(index % 2),
                     RequirePkce = (byte)(index % 2),
                     RequireConsent = (byte)(index % 2),
-                    TokenLifetime = 3600,
+                    TokenLifetime = TESTTOKENLIFETIME,
                     RequireClientSecret = (byte)(index % 2),
 
 
@@ -107,6 +123,8 @@ namespace IdentityServer4.Storage.FreeSql.Tests.ServiceTest
                     RedirectUris = TESTREDIRECTURIS.Select(p => p + $"_{index}").ToArray(),
                 }
             });
+
+            return result;
         }
 
         [Fact]
@@ -136,6 +154,12 @@ namespace IdentityServer4.Storage.FreeSql.Tests.ServiceTest
                     PostLogoutRedirectUris = TESTPOSTLOGOUTREDIRECTURIS,
                     FrontChannelLogoutUri = TESTFRONTCHANNELLOGOUTURI,
                     BackChannelLogoutUri = TESTBACKCHANNELLOGOUTURI,
+                    TokenLifetime = TESTTOKENLIFETIME,
+                    AccessTokenType = Types.EAccessTokenType.Jwt,
+                    AllowOfflineAccess = TEST_ENABLED,
+                    AllowRememberConsent = TEST_DISABLED,
+                    RequirePkce = TEST_ENABLED,
+                    RequireConsent = TEST_ENABLED,
                 }
             });
 
@@ -170,7 +194,7 @@ namespace IdentityServer4.Storage.FreeSql.Tests.ServiceTest
             obj.RequirePkce.Should().Be(TEST_ENABLED);
             obj.RequireConsent.Should().Be(TEST_ENABLED);
             obj.AllowOfflineAccess.Should().Be(TEST_ENABLED);
-            obj.TokenLifetime.Should().Be(3600);
+            obj.TokenLifetime.Should().Be(TESTTOKENLIFETIME);
             obj.AccessTokenType.Should().Be(Types.EAccessTokenType.Reference);
 
             obj.AllowedGrantTypes.Should().HaveCount(TESTALLOWEDGRANTTYPES.Length).And.BeEquivalentTo(TESTALLOWEDGRANTTYPES);
@@ -310,6 +334,208 @@ namespace IdentityServer4.Storage.FreeSql.Tests.ServiceTest
             var corsList = await service.GetValidPostLogoutUrisAsync();
 
             corsList.Should().HaveCount(14);
+        }
+
+        [Fact]
+        public async Task Create_WithNullRequest_Should_ThrowException()
+        {
+            var service = _fixture.ServiceProvider.GetRequiredService<IDbClientService>();
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () => await service.CreateClientAsync(null));
+        }
+
+        [Fact]
+        public async Task Create_WithNullDto_Should_ThrowException2()
+        {
+            var service = _fixture.ServiceProvider.GetRequiredService<IDbClientService>();
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () => await service.CreateClientAsync(new Services.Requests.CreateClientRequest
+            {
+                Client = null
+            }));
+        }
+
+        [Fact]
+        public async Task Create_With_EmptyClientId_Should_ThrowException2()
+        {
+            var service = _fixture.ServiceProvider.GetRequiredService<IDbClientService>();
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () => await service.CreateClientAsync(new Services.Requests.CreateClientRequest
+            {
+                Client = new Services.Dto.ClientDto
+                {
+                    ClientId = ""
+                }
+            }));
+        }
+
+        [Fact]
+        public async Task Update_WithNullRequset_Should_ThrowException()
+        {
+            var service = _fixture.ServiceProvider.GetRequiredService<IDbClientService>();
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () => await service.UpdateClientAsync(null));
+        }
+
+        [Fact]
+        public async Task Update_WithNullDto_Should_ThrowException2()
+        {
+            var service = _fixture.ServiceProvider.GetRequiredService<IDbClientService>();
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () => await service.UpdateClientAsync(new Services.Requests.UpdateClientRequest
+            {
+                Client = null
+            }));
+        }
+
+        [Fact]
+        public async Task Update_With_EmptyClientId_Should_ThrowException2()
+        {
+            var service = _fixture.ServiceProvider.GetRequiredService<IDbClientService>();
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () => await service.UpdateClientAsync(new Services.Requests.UpdateClientRequest
+            {
+                Client = new Services.Dto.ClientDto
+                {
+                    ClientId = ""
+                }
+            }));
+        }
+
+        [Fact]
+        public async Task Update_With_ZeroId_Should_ThrowException()
+        {
+            var service = _fixture.ServiceProvider.GetRequiredService<IDbClientService>();
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () => await service.UpdateClientAsync(new Services.Requests.UpdateClientRequest
+            {
+                Client = new Services.Dto.ClientDto
+                {
+                    Id = 0,
+                    ClientId = "xxxx"
+                }
+            }));
+        }
+
+        [Fact]
+        public async Task Update_Should_OK()
+        {
+            // arrange
+            _fixture.CleanDb();
+            var service = _fixture.ServiceProvider.GetRequiredService<IDbClientService>();
+
+            // act
+            var result = await service.CreateClientAsync(new Services.Requests.CreateClientRequest
+            {
+                Operator = "user1",
+                Client = new Services.Dto.ClientDto
+                {
+                    ClientId = TESTCLIENTID,
+                    ClientName = TESTCLIENTNAME,
+                    ClientDescription = TESTCLIENTDESCRIPTION,
+                    ClientUri = TESTCLIENTURI,
+                    Enabled = TEST_ENABLED,
+                    AllowedGrantTypes = TESTALLOWEDGRANTTYPES,
+                    AllowedScopes = TESTALLOWEDSCOPES,
+                    DisplayOrder = TESTDISPLAYORDER,
+                    AllowedCorsOrigins = TESTALLOWEDCORSORIGINS,
+                    LogoUri = TESTLOGOURI,
+                    RedirectUris = TESTREDIRECTURIS,
+                    PostLogoutRedirectUris = TESTPOSTLOGOUTREDIRECTURIS,
+                    FrontChannelLogoutUri = TESTFRONTCHANNELLOGOUTURI,
+                    BackChannelLogoutUri = TESTBACKCHANNELLOGOUTURI,
+                    AccessTokenType = Types.EAccessTokenType.Jwt
+                }
+            });
+
+            // assert
+            result.Should().Be(1);
+
+            var client = await service.GetClientByClientIdAsync(new Services.Requests.GetClientByClientIdRequest
+            {
+                ClientId = TESTCLIENTID
+            });
+
+            client.Should().NotBeNull();
+
+            client.ClientName = TESTCLIENTNAME2;
+            client.ClientDescription = TESTCLIENTDESCRIPTION2;
+            client.ClientUri = TESTCLIENTURI2;
+            client.Enabled = TEST_ENABLED2;
+            client.AllowedGrantTypes = TESTALLOWEDGRANTTYPES2;
+            client.AllowedScopes = TESTALLOWEDSCOPES2;
+            client.DisplayOrder = TESTDISPLAYORDER2;
+            client.AllowedCorsOrigins = TESTALLOWEDCORSORIGINS2;
+            client.LogoUri = TESTLOGOURI2;
+            client.RedirectUris = TESTREDIRECTURIS2;
+            client.PostLogoutRedirectUris = TESTPOSTLOGOUTREDIRECTURIS2;
+            client.FrontChannelLogoutUri = TESTFRONTCHANNELLOGOUTURI2;
+            client.BackChannelLogoutUri = TESTBACKCHANNELLOGOUTURI2;
+            client.TokenLifetime = TESTTOKENLIFETIME2;
+            client.AccessTokenType = Types.EAccessTokenType.Reference;
+            client.ClientId = TESTCLIENTID2;
+            client.RequireClientSecret = TEST_ENABLED;
+            client.RequirePkce = TEST_ENABLED;
+            client.RequireConsent = TEST_ENABLED;
+            client.AllowOfflineAccess = TEST_ENABLED;
+            client.ClientSecrets = TESTCLIENTSECRET2;
+
+            await service.UpdateClientAsync(new Services.Requests.UpdateClientRequest { Client = client });
+
+
+            var client2 = await service.GetClientByClientIdAsync(new Services.Requests.GetClientByClientIdRequest
+            {
+                ClientId = TESTCLIENTID2
+            });
+
+            // assert
+            client2.Should().NotBeNull();
+            client2.ClientId.Should().Be(TESTCLIENTID2);
+            client2.ClientName.Should().Be(TESTCLIENTNAME2);
+            client2.DisplayOrder.Should().Be(TESTDISPLAYORDER2);
+            client2.ClientDescription.Should().Be(TESTCLIENTDESCRIPTION2);
+            client2.Enabled.Should().Be(TEST_ENABLED2);
+            client2.LogoUri.Should().Be(TESTLOGOURI2);
+            client2.FrontChannelLogoutUri.Should().Be(TESTFRONTCHANNELLOGOUTURI2);
+            client2.BackChannelLogoutUri.Should().Be(TESTBACKCHANNELLOGOUTURI2);
+            client2.RequireClientSecret.Should().Be(TEST_ENABLED);
+            client2.RequirePkce.Should().Be(TEST_ENABLED);
+            client2.RequireConsent.Should().Be(TEST_ENABLED);
+            client2.AllowOfflineAccess.Should().Be(TEST_ENABLED);
+            client2.TokenLifetime.Should().Be(TESTTOKENLIFETIME2);
+            client2.AccessTokenType.Should().Be(Types.EAccessTokenType.Reference);
+
+            client2.AllowedGrantTypes.Should().HaveCount(TESTALLOWEDGRANTTYPES2.Length).And.BeEquivalentTo(TESTALLOWEDGRANTTYPES2);
+            client2.AllowedScopes.Should().HaveCount(TESTALLOWEDSCOPES2.Length).And.BeEquivalentTo(TESTALLOWEDSCOPES2);
+            client2.AllowedCorsOrigins.Should().HaveCount(TESTALLOWEDCORSORIGINS2.Length).And.BeEquivalentTo(TESTALLOWEDCORSORIGINS2);
+            client2.RedirectUris.Should().HaveCount(TESTREDIRECTURIS2.Length).And.BeEquivalentTo(TESTREDIRECTURIS2);
+            client2.PostLogoutRedirectUris.Should().HaveCount(TESTPOSTLOGOUTREDIRECTURIS2.Length).And.BeEquivalentTo(TESTPOSTLOGOUTREDIRECTURIS2);
+            client2.ClientSecrets.Should().HaveCount(TESTCLIENTSECRET2.Length).And.BeEquivalentTo(TESTCLIENTSECRET2);
+
+
+        }
+
+        [Fact]
+        public async Task Update_WithOtherSameName_Should_ThrowExecption()
+        {
+            _fixture.CleanDb();
+            var service = _fixture.ServiceProvider.GetRequiredService<IDbClientService>();
+
+            // act
+            var id1 = await CreateTestObj2(service, 1);
+            var id2 = await CreateTestObj2(service, 2);
+
+            var client = await service.GetClientByIdAsync(new Services.Requests.GetClientByIdRequest { Id = id2 });
+
+            client.ClientId = TESTCLIENTID + 1; // same to object 1
+
+            await Assert.ThrowsAsync<BllException>(() => service.UpdateClientAsync(new Services.Requests.UpdateClientRequest
+            {
+                Client = client,
+                Operator = "1111"
+            }));
+
+
         }
     }
 }
