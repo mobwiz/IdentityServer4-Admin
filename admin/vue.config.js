@@ -9,7 +9,7 @@ module.exports = {
   devServer: {
     port: 8088,
     proxy: {
-      "/api": {
+      "/admin/api": {
         target: "http://localhost:4321",
         ws: false,
         secure: false,

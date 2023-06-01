@@ -49,10 +49,17 @@ try
         app.UseSwaggerUI();
     }
 
+    app.UsePathBase(app.Configuration.GetValue<string>("PathBase"));
+
     app.UseAuthentication();
+    //app.MapControllers();
+    app.UseRouting();
     app.UseAuthorization();
 
-    app.MapControllers();
+    app.UseEndpoints(endpoints =>
+    {
+        endpoints.MapControllers();
+    });
 
     app.Lifetime.SyncFreesqlStorageDatabase(app.Services, app.Logger);
 
