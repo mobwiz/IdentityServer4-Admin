@@ -31,7 +31,8 @@ namespace IdentityServer4.Storage.FreeSql.Repositories.Impl
 
             var itemsToInsert = new List<MStringCollectionItem>();
 
-            foreach (var str in values)
+            // 避免重复
+            foreach (var str in new HashSet<string>(values))
             {
                 if (!string.IsNullOrWhiteSpace(str))
                 {

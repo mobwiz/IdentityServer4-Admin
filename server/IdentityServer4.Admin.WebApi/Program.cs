@@ -38,6 +38,10 @@ try
 
     app.UseHealthChecks("/health");
 
+    // use path base
+    app.UsePathBase(app.Configuration.GetValue<string>("PathBase"));
+
+
     // use static
     app.UseDefaultFiles();
     app.UseStaticFiles();
@@ -48,8 +52,6 @@ try
         app.UseSwagger();
         app.UseSwaggerUI();
     }
-
-    app.UsePathBase(app.Configuration.GetValue<string>("PathBase"));
 
     app.UseAuthentication();
     //app.MapControllers();

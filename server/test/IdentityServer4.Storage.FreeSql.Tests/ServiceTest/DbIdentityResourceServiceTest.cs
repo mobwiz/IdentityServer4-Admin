@@ -12,11 +12,11 @@ using NetTaste;
 namespace IdentityServer4.Storage.FreeSql.Tests.ServiceTest
 {
     [Collection("DatabaseIntergationTest")] // To avoid parallel test
-    public class IdentityResourceServiceTest : IClassFixture<ServerFixture>
+    public class DbIdentityResourceServiceTest : IClassFixture<ServerFixture>
     {
         private readonly ServerFixture _fixture;
 
-        public IdentityResourceServiceTest(ServerFixture fixture)
+        public DbIdentityResourceServiceTest(ServerFixture fixture)
         {
             _fixture = fixture;
         }

@@ -149,6 +149,12 @@ namespace IdentityServer4.Storage.FreeSql.Services.Impl
                 throw new BllException(400, "Client with id {0} already existed", client.ClientId);
             }
 
+            // TODO ，这里要检查一下 scope 是否存在
+
+
+
+            // END
+
             var mclient = _mapper.Map<MClient>(request.Client);
 
             mclient.AllowedGrantTypes = clientInfo.AllowedGrantTypes;
