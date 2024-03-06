@@ -28,3 +28,4 @@ docker build -t identity-admin:localest -f ./docker/Dockerfile .
 ### Demo Site
 
 [http://demo-idsadm.dotnetcore.icu/admin/](http://demo-idsadm.dotnetcore.icu/admin/) 
+Demo user: admin/Demo123456
