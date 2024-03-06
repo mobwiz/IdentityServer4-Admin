@@ -31,6 +31,7 @@
       :data-source="dataList"
       :pagination="false"
       rowKey="id"
+      :loading="loading"
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'enabled'">
@@ -112,6 +113,7 @@ export default {
       drawerVisible: false,
       currentClientId: "",
       currentClientName: "",
+      loading: false,
     };
   },
   created() {
@@ -120,11 +122,13 @@ export default {
   methods: {
     loadClients(pn) {
       this.so.pageIndex = pn;
+      this.loading = true;
       ClientApi.getClients(this.so).then((resp) => {
         if (resp.code == 0) {
           this.dataList = resp.data.items;
           this.total = resp.data.totalCount;
         }
+        this.loading = false;
       });
     },
     onPageChange(e) {

@@ -35,6 +35,7 @@
       :data-source="dataList"
       rowKey="id"
       :pagination="false"
+      :loading="loading"
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'enabled'">
@@ -151,6 +152,7 @@ export default {
       },
       currentIdentityResource: null,
       editDrawerVisible: false,
+      loading: false,
     };
   },
   created() {
@@ -166,6 +168,7 @@ export default {
     },
     loadIdentityResources(pn) {
       this.so.pageIndex = pn;
+      this.loading = true;
 
       ResourceApi.getIdentityResources({
         pageIndex: this.so.pageIndex,
@@ -180,6 +183,7 @@ export default {
         } else {
           this.$message.error(resp.message);
         }
+        this.loading = false;
       });
     },
     newIdentityResource() {

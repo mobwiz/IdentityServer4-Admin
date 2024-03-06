@@ -33,6 +33,7 @@
       :data-source="dataList"
       rowKey="id"
       :pagination="false"
+      :loading="loading"
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'enabled'">
@@ -154,6 +155,7 @@ export default defineComponent({
         pageSizes: 10,
         onlyEnabled: false,
       },
+      loading: false
     };
   },
   created() {
@@ -171,6 +173,7 @@ export default defineComponent({
     loadApiScopes(pn) {
       this.pageIndex = pn;
       console.log(this.so);
+      this.loading = true;
       ResourceApi.getApiScopes({
         pageIndex: this.so.pageIndex,
         pageSize: this.so.pageSize,
@@ -183,6 +186,7 @@ export default defineComponent({
         } else {
           this.$message.error(resp.message);
         }
+        this.loading = false;
       });
     },
     editItem(item) {

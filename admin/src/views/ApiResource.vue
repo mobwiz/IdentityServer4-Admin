@@ -34,6 +34,7 @@
       :data-source="dataList"
       rowKey="id"
       :pagination="false"
+      :loading="loading"
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'enabled'">
@@ -137,6 +138,7 @@ export default {
       },
       currentApiResource: undefined,
       totalCount: 0,
+      loading: false,
     };
   },
   created() {
@@ -153,6 +155,7 @@ export default {
     },
     loadApiResources(pn) {
       this.so.pageIndex = pn || this.so.pageIndex;
+      this.loading = true;
       ResourceApi.getApiResources({
         pageIndex: this.so.pageIndex,
         pageSize: this.so.pageSize,
@@ -165,6 +168,7 @@ export default {
         } else {
           this.$message.error(resp.message);
         }
+        this.loading = false;
       });
     },
     newApiResource() {
